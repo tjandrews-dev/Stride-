@@ -1,0 +1,12 @@
+{
+  "name": "Stride Actions",
+  "image": "mcr.microsoft.com/vscode/devcontainers/javascript-node:22",
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": { "label": "Next.js", "onAutoForward": "openBrowser" }
+  },
+  "postCreateCommand": "npm install && npx prisma generate && npx prisma migrate dev --name init && node prisma/seed.js",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": { "version": "22" }
+  }
+}
