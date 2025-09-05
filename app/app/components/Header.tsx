@@ -57,3 +57,10 @@ export default function Header() {
     </header>
   );
 }
+<nav style={{ display: "flex", gap: 18, fontSize: 14 }}>
+  {link("/", "Equine")}
+  {link("/auctions", "Auctions")}
+  {link("/tack", "Tack")}
+  {link("/machinery", "Machinery")}   {/* <- add this line */}
+  {link("/sell", "Sell")}
+</nav>
