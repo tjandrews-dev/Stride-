@@ -8,33 +8,46 @@ type Props = {
   saleType: string;
   state?: string | null;
   priceCents?: number | null;
-  reserveCents?: number | null;
+  currentBidCents?: number | null;
+  reserveMet?: boolean;
   featured?: boolean;
+  subtitle?: string; // e.g. "Eventing – 16.1hh Bold"
 };
 
+function money(cents?: number | null) {
+  if (!cents && cents !== 0) return "";
+  return "A$" + (cents / 100).toLocaleString();
+}
+
 export default function ListingCard(p: Props) {
-  const img = p.images?.[0];
+  const img = p.images?.[0] || "/placeholder-horse.jpg";
+
   return (
-    <Link href={`/listing/${p.id}`} style={{
-      display:'block', background:'#fff', border:'1px solid #ececf2',
-      borderRadius:12, overflow:'hidden', textDecoration:'none', color:'inherit'
-    }}>
-      <div style={{ position:'relative', aspectRatio:'4/3', background:'#f5f6f7' }}>
-        {img ? <img src={img} alt={p.title} style={{width:'100%',height:'100%',objectFit:'cover'}}/> : null}
-        {p.featured && (
-          <span style={{position:'absolute',top:8,left:8,background:'#53C0C5',color:'#fff',
-                         fontSize:12,padding:'2px 6px',borderRadius:8}}>Featured</span>
-        )}
+    <Link href={`/listing/${p.id}`} className="card" style={{ textDecoration:'none' }}>
+      <div className="card-img">
+        <img src={img} alt={p.title} style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+        {p.featured && <span className="badge">Featured</span>}
+        {p.reserveMet && <span className="badge" style={{ left:'auto', right:8, background:'#0B1D39' }}>RESERVE MET</span>}
       </div>
-      <div style={{ padding:12 }}>
-        <div style={{fontSize:12,color:'#6b7280',textTransform:'capitalize'}}>{p.category}</div>
-        <div style={{fontWeight:700, lineHeight:1.2, marginTop:4}}>{p.title}</div>
-        <div style={{fontSize:12,color:'#6b7280'}}>{p.state ?? ''}</div>
-        <div style={{marginTop:4, fontWeight:700}}>
-          {p.saleType === 'CLASSIFIED' && p.priceCents ? `$${(p.priceCents/100).toLocaleString()}` : null}
-          {p.saleType === 'AUCTION' && p.reserveCents ? `Reserve: $${(p.reserveCents/100).toLocaleString()}` : null}
-        </div>
+      <div className="card-body">
+        <div style={{ fontSize:16, fontWeight:800, lineHeight:1.2 }}>{p.title}</div>
+        {p.subtitle && <div style={{ color:'#394150', marginTop:4 }}>{p.subtitle}</div>}
+
+        {p.saleType === 'CLASSIFIED' && (
+          <div style={{ marginTop:8 }}>
+            <div style={{ color:'#6b7280', fontSize:13 }}>Price</div>
+            <div style={{ fontWeight:800 }}>{money(p.priceCents)}</div>
+          </div>
+        )}
+
+        {p.saleType === 'AUCTION' && (
+          <div style={{ marginTop:8 }}>
+            <div style={{ color:'#6b7280', fontSize:13 }}>Current Bid</div>
+            <div style={{ fontWeight:800 }}>{money(p.currentBidCents)}</div>
+          </div>
+        )}
       </div>
     </Link>
   );
 }
+
