@@ -1,5 +1,11 @@
-datasource db { provider = "sqlite"; url = "file:./dev.db" }
-generator client { provider = "prisma-client-js" }
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
 
 model User {
   id        String   @id @default(cuid())
@@ -15,8 +21,8 @@ model Listing {
   id           String   @id @default(cuid())
   title        String
   description  String
-  saleType     String   @default("CLASSIFIED")
-  category     String
+  saleType     String   @default("CLASSIFIED") // "AUCTION" or "CLASSIFIED"
+  category     String   // "horse" | "tack" | "transport" | "machinery"
   breed        String?
   discipline   String?
   state        String?
@@ -42,3 +48,4 @@ model Bid {
   user        User     @relation(fields: [userId], references: [id])
   createdAt   DateTime @default(now())
 }
+
