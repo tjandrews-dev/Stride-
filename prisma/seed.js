@@ -1,154 +1,107 @@
-const { PrismaClient } = require('@prisma/client');
+import { PrismaClient } from '@prisma/client';
+
 const prisma = new PrismaClient();
-const cents = v => Math.round(Number(v) * 100);
 
 async function main() {
-  console.log("🌱 Seeding…");
-
-  const seller = await prisma.user.upsert({
-    where: { email: 'demo@stride.test' },
-    update: {},
-    create: { email: 'demo@stride.test', name: 'Demo Seller' }
-  });
-
-  // Realistic horse/tack images (royalty-free Unsplash)
-  const img = {
-    ridgeline: "https://images.unsplash.com/photo-1503756234503-4a4fbe6b9468",
-    willow:    "https://images.unsplash.com/photo-1517849845537-4d257902454a",
-    highgrove: "https://images.unsplash.com/photo-1500367215255-0e0b25b396af",
-    saddle:    "https://images.unsplash.com/photo-1611784212541-9d085b2d24a2",
-    helmet:    "https://images.unsplash.com/photo-1520975682038-7e3ca9c5d7c5"
-  };
-
-  // ---- AUCTIONS (racehorses) ----
-  const ridgeline = await prisma.listing.create({
-    data: {
-      title: "Ridgeline",
-      description: "Eventing – 16.1hh · Bold type, brave and careful.",
-      saleType: "AUCTION",
-      category: "horse",
-      breed: "Thoroughbred",
-      discipline: "Eventing",
-      state: "VIC",
-      reserveCents: cents(15000),
-      endsAt: new Date(Date.now() + 48*60*60*1000),
-      images: JSON.stringify([img.ridgeline]),
-      featured: true,
-      userId: seller.id,
-    }
-  });
-
-  const willow = await prisma.listing.create({
-    data: {
-      title: "Willow",
-      description: "Show Jumping – Quiet type with nice technique.",
-      saleType: "AUCTION",
-      category: "horse",
-      breed: "Warmblood",
-      discipline: "Showjumping",
-      state: "NSW",
-      reserveCents: cents(22000),
-      endsAt: new Date(Date.now() + 36*60*60*1000),
-      images: JSON.stringify([img.willow]),
-      featured: true,
-      userId: seller.id,
-    }
-  });
-
-  const highgrove = await prisma.listing.create({
-    data: {
-      title: "Highgrove",
-      description: "Leisure – 15.2hh · Kind and straightforward.",
-      saleType: "AUCTION",
-      category: "horse",
-      breed: "Thoroughbred",
-      discipline: "Leisure",
-      state: "QLD",
-      reserveCents: cents(10000),
-      endsAt: new Date(Date.now() + 60*60*60*1000),
-      images: JSON.stringify([img.highgrove]),
-      userId: seller.id,
-    }
-  });
-
-  // Sample bids (so “Current Bid” shows)
-  await prisma.bid.createMany({
-    data: [
-      { userId: seller.id, listingId: ridgeline.id, amountCents: cents(15000) },
-      { userId: seller.id, listingId: willow.id,    amountCents: cents(22000) },
-      { userId: seller.id, listingId: highgrove.id, amountCents: cents(10000) },
-    ]
-  });
-
-  // ---- CLASSIFIEDS: tack ----
+  // --- HORSES ---
   await prisma.listing.createMany({
     data: [
       {
-        title: "English Leather Saddle 17.5\"",
-        description: "Well cared for, supple leather.",
-        saleType: "CLASSIFIED",
-        category: "tack",
-        state: "VIC",
-        priceCents: cents(1200),
-        images: JSON.stringify([img.saddle]),
-        userId: seller.id
+        title: "Ridgeline",
+        description: "Eventing – 16.1hh, bold and athletic",
+        saleType: "AUCTION",
+        price: 15000,
+        imageUrl: "/horses/ridgeline.jpg",
+        category: "HORSE",
       },
       {
-        title: "Equestrian Helmet (M)",
-        description: "Meets current safety standards.",
+        title: "Willow",
+        description: "Show Jumping, quiet temperament",
+        saleType: "AUCTION",
+        price: 22000,
+        imageUrl: "/horses/willow.jpg",
+        category: "HORSE",
+      },
+      {
+        title: "Highgrove",
+        description: "Leisure – 15.2hh, reliable gelding",
         saleType: "CLASSIFIED",
-        category: "tack",
-        state: "NSW",
-        priceCents: cents(80),
-        images: JSON.stringify([img.helmet]),
-        userId: seller.id
-      }
-    ]
+        price: 10000,
+        imageUrl: "/horses/highgrove.jpg",
+        category: "HORSE",
+      },
+    ],
   });
 
-  console.log("✅ Seed complete!");
+  // --- TACK ---
+  await prisma.listing.createMany({
+    data: [
+      {
+        title: "English Leather Saddle",
+        description: "Well maintained, very comfortable",
+        saleType: "CLASSIFIED",
+        price: 1200,
+        imageUrl: "/tack/saddle.jpg",
+        category: "TACK",
+      },
+      {
+        title: "Bridle",
+        description: "Quality leather bridle",
+        saleType: "CLASSIFIED",
+        price: 250,
+        imageUrl: "/tack/bridle.jpg",
+        category: "TACK",
+      },
+      {
+        title: "Riding Boots",
+        description: "Durable leather riding boots",
+        saleType: "CLASSIFIED",
+        price: 300,
+        imageUrl: "/tack/boots.jpg",
+        category: "TACK",
+      },
+    ],
+  });
+
+  // --- MACHINERY ---
+  await prisma.listing.createMany({
+    data: [
+      {
+        title: "2-Horse Straight Load Float",
+        description: "Well maintained, good brakes, registered",
+        saleType: "CLASSIFIED",
+        price: 8500,
+        imageUrl: "/machinery/float.jpg",
+        category: "MACHINERY",
+      },
+      {
+        title: "Tractor",
+        description: "John Deere tractor, low hours",
+        saleType: "CLASSIFIED",
+        price: 32000,
+        imageUrl: "/machinery/tractor.jpg",
+        category: "MACHINERY",
+      },
+      {
+        title: "Horse Truck",
+        description: "6-horse truck with living area",
+        saleType: "CLASSIFIED",
+        price: 75000,
+        imageUrl: "/machinery/truck.jpg",
+        category: "MACHINERY",
+      },
+    ],
+  });
 }
 
-main().catch(e => { console.error(e); process.exit(1); })
-       .finally(async () => { await prisma.$disconnect(); });
-{
-  title: "2-Horse Straight Load Float",
-  description: "Well maintained, good brakes, registered.",
-  saleType: "CLASSIFIED",
-  category: "machinery",
-  state: "VIC",
-  priceCents: 1500000,
-  images: JSON.stringify(["/machinery/horse-float.jpg"]),
-  userId: seller.id
-},
-{
-  title: "Toyota Land Cruiser Ute",
-  description: "Perfect for towing float and gear. 79 Series, low kms.",
-  saleType: "CLASSIFIED",
-  category: "machinery",
-  state: "NSW",
-  priceCents: 8500000,
-  images: JSON.stringify(["/machinery/ute.jpg"]),
-  userId: seller.id
-},
-{
-  title: "John Deere Tractor",
-  description: "Reliable workhorse with front-end loader.",
-  saleType: "CLASSIFIED",
-  category: "machinery",
-  state: "QLD",
-  priceCents: 3200000,
-  images: JSON.stringify(["/machinery/tractor.jpg"]),
-  userId: seller.id
-},
-{
-  title: "Livestock Truck",
-  description: "Clean deck, recent service, ready to work.",
-  saleType: "CLASSIFIED",
-  category: "machinery",
-  state: "WA",
-  priceCents: 6800000,
-  images: JSON.stringify(["/machinery/truck.jpg"]),
-  userId: seller.id
-}
+main()
+  .then(async () => {
+    console.log("✅ Database seeded successfully!");
+    await prisma.$disconnect();
+  })
+  .catch(async (e) => {
+    console.error("❌ Error seeding database:", e);
+    await prisma.$disconnect();
+    process.exit(1);
+  });
 
