@@ -1,14 +1,11 @@
 import { prisma } from "../lib/prisma";
 import ListingCard from "../components/ListingCard";
 
-export const dynamic = "force-dynamic";
-
-export default async function AuctionsPage() {
+export default async function Auctions() {
   const auctions = await prisma.listing.findMany({
     where: { saleType: "AUCTION", category: "horse" },
     include: { bids: true },
-    orderBy: { endsAt: "asc" },
-    take: 48
+    orderBy: { endsAt: "asc" }
   });
 
   const mapped = auctions.map(l => {
@@ -19,8 +16,12 @@ export default async function AuctionsPage() {
 
   return (
     <div style={{ display:'grid', gap:16 }}>
-      <h1 style={{ margin:0 }}>Stride Auctions (racehorses)</h1>
-      <div className="grid" style={{ gridTemplateColumns:'repeat(auto-fill, minmax(240px, 1fr))' }}>
+      <div style={{ display:'flex', justifyContent:'center', marginTop:6 }}>
+        <img src="/stride-auctions-logo.png" alt="Stride Auctions" height={44}/>
+      </div>
+
+      <h1 style={{ margin:'6px 0 0' }}>Stride Auctions (racehorses)</h1>
+      <div className="grid" style={{ gridTemplateColumns:'repeat(auto-fill, minmax(260px,1fr))' }}>
         {mapped.map((l:any)=>(
           <ListingCard key={l.id}
             id={l.id} title={l.title}
@@ -30,11 +31,11 @@ export default async function AuctionsPage() {
             currentBidCents={l.currentBidCents}
             reserveMet={l.reserveMet}
             featured={l.featured}
+            endsAt={l.endsAt?.toISOString?.() ?? l.endsAt as any}
           />
         ))}
       </div>
-      {mapped.length === 0 && <p>No auctions yet.</p>}
+      {mapped.length===0 && <p>No auctions yet.</p>}
     </div>
   );
 }
-
