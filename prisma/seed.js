@@ -111,4 +111,44 @@ async function main() {
 
 main().catch(e => { console.error(e); process.exit(1); })
        .finally(async () => { await prisma.$disconnect(); });
+{
+  title: "2-Horse Straight Load Float",
+  description: "Well maintained, good brakes, registered.",
+  saleType: "CLASSIFIED",
+  category: "machinery",
+  state: "VIC",
+  priceCents: 1500000,
+  images: JSON.stringify(["/machinery/horse-float.jpg"]),
+  userId: seller.id
+},
+{
+  title: "Toyota Land Cruiser Ute",
+  description: "Perfect for towing float and gear. 79 Series, low kms.",
+  saleType: "CLASSIFIED",
+  category: "machinery",
+  state: "NSW",
+  priceCents: 8500000,
+  images: JSON.stringify(["/machinery/ute.jpg"]),
+  userId: seller.id
+},
+{
+  title: "John Deere Tractor",
+  description: "Reliable workhorse with front-end loader.",
+  saleType: "CLASSIFIED",
+  category: "machinery",
+  state: "QLD",
+  priceCents: 3200000,
+  images: JSON.stringify(["/machinery/tractor.jpg"]),
+  userId: seller.id
+},
+{
+  title: "Livestock Truck",
+  description: "Clean deck, recent service, ready to work.",
+  saleType: "CLASSIFIED",
+  category: "machinery",
+  state: "WA",
+  priceCents: 6800000,
+  images: JSON.stringify(["/machinery/truck.jpg"]),
+  userId: seller.id
+}
 
